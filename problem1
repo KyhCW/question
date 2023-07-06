@@ -1,0 +1,85 @@
+//this code is a reference from youtube
+
+import java.util.*;
+
+public class Problem1 {
+    public static Map<String, Integer> dijkstra(Map<String, Map<String, Integer>> graph, String start) {
+        Map<String, Integer> distances = new HashMap<>();
+        for (String node : graph.keySet()) {
+            distances.put(node, Integer.MAX_VALUE);
+        }
+        distances.put(start, 0);
+
+        PriorityQueue<Node> priorityQueue = new PriorityQueue<>();
+        priorityQueue.offer(new Node(start, 0));
+
+        while (!priorityQueue.isEmpty()) {
+            Node current = priorityQueue.poll();
+            int currentDistance = current.distance;
+            String currentNode = current.node;
+
+            // Ignore if have already found a shorter path
+            if (currentDistance > distances.get(currentNode)) {
+                continue;
+            }
+
+            Map<String, Integer> neighbors = graph.get(currentNode);
+            for (Map.Entry<String, Integer> neighbor : neighbors.entrySet()) {
+                String nextNode = neighbor.getKey();
+                int weight = neighbor.getValue();
+                int distance = currentDistance + weight;
+
+                // Update the distance if a shorter path is found
+                if (distance < distances.get(nextNode)) {
+                    distances.put(nextNode, distance);
+                    priorityQueue.offer(new Node(nextNode, distance));
+                }
+            }
+        }
+
+        return distances;
+    }
+
+    public static void main(String[] args) {
+        Map<String, Map<String, Integer>> mapGraph = new HashMap<>();
+        mapGraph.put("A", new HashMap<>());
+        mapGraph.put("B", new HashMap<>());
+        mapGraph.put("C", new HashMap<>());
+        mapGraph.put("D", new HashMap<>());
+        mapGraph.put("E", new HashMap<>());
+        mapGraph.put("F", new HashMap<>());
+
+        mapGraph.get("A").put("B", 10);
+        mapGraph.get("A").put("C", 8);
+        mapGraph.get("B").put("D", 7);
+        mapGraph.get("B").put("E", 6);
+        mapGraph.get("C").put("B", 8);
+        mapGraph.get("C").put("E", 12);
+        mapGraph.get("D").put("E", 16);
+        mapGraph.get("D").put("F", 13);
+        mapGraph.get("E").put("F", 4);
+
+        String startNode = "A";
+        Map<String, Integer> distances = dijkstra(mapGraph, startNode);
+
+        System.out.println("The shortest distances from node " + startNode + ":");
+        for (Map.Entry<String, Integer> entry : distances.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+
+    static class Node implements Comparable<Node> {
+        String node;
+        int distance;
+
+        Node(String node, int distance) {
+            this.node = node;
+            this.distance = distance;
+        }
+
+        @Override
+        public int compareTo(Node other) {
+            return Integer.compare(distance, other.distance);
+        }
+    }
+}
