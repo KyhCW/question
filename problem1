@@ -13,23 +13,25 @@ public class Problem1 {
         PriorityQueue<Node> priorityQueue = new PriorityQueue<>();
         priorityQueue.offer(new Node(start, 0));
 
+        //d = current distance
+        //n = current node
         while (!priorityQueue.isEmpty()) {
             Node current = priorityQueue.poll();
-            int currentDistance = current.distance;
-            String currentNode = current.node;
+            int d = current.distance;
+            String n = current.node;
 
-            // Ignore if have already found a shorter path
-            if (currentDistance > distances.get(currentNode)) {
+            // if had already find the shorter path ignore it
+            if (d > distances.get(n)) {
                 continue;
             }
 
-            Map<String, Integer> neighbors = graph.get(currentNode);
+            Map<String, Integer> neighbors = graph.get(n);
             for (Map.Entry<String, Integer> neighbor : neighbors.entrySet()) {
                 String nextNode = neighbor.getKey();
                 int weight = neighbor.getValue();
-                int distance = currentDistance + weight;
+                int distance = d + weight;
 
-                // Update the distance if a shorter path is found
+                // if the shorter path is found update the distance
                 if (distance < distances.get(nextNode)) {
                     distances.put(nextNode, distance);
                     priorityQueue.offer(new Node(nextNode, distance));
@@ -41,27 +43,30 @@ public class Problem1 {
     }
 
     public static void main(String[] args) {
-        Map<String, Map<String, Integer>> mapGraph = new HashMap<>();
-        mapGraph.put("A", new HashMap<>());
-        mapGraph.put("B", new HashMap<>());
-        mapGraph.put("C", new HashMap<>());
-        mapGraph.put("D", new HashMap<>());
-        mapGraph.put("E", new HashMap<>());
-        mapGraph.put("F", new HashMap<>());
+        Map<String, Map<String, Integer>> vertex = new HashMap<>();
+        //create the vertex of A B C D E F
+        vertex.put("A", new HashMap<>());
+        vertex.put("B", new HashMap<>());
+        vertex.put("C", new HashMap<>());
+        vertex.put("D", new HashMap<>());
+        vertex.put("E", new HashMap<>());
+        
+        //assign the value and distance
+        vertex.get("A").put("B", 10);
+        vertex.get("A").put("C", 8);
+        vertex.get("B").put("D", 7);
+        vertex.get("B").put("E", 6);
+        vertex.get("C").put("B", 8);
+        vertex.get("C").put("E", 12);
+        vertex.get("D").put("E", 16);
+   
+        
 
-        mapGraph.get("A").put("B", 10);
-        mapGraph.get("A").put("C", 8);
-        mapGraph.get("B").put("D", 7);
-        mapGraph.get("B").put("E", 6);
-        mapGraph.get("C").put("B", 8);
-        mapGraph.get("C").put("E", 12);
-        mapGraph.get("D").put("E", 16);
-        mapGraph.get("D").put("F", 13);
-        mapGraph.get("E").put("F", 4);
-
+        //The start node set with A vertex
         String startNode = "A";
-        Map<String, Integer> distances = dijkstra(mapGraph, startNode);
+        Map<String, Integer> distances = dijkstra(vertex, startNode);
 
+        //print out the ouput
         System.out.println("The shortest distances from node " + startNode + ":");
         for (Map.Entry<String, Integer> entry : distances.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
