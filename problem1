@@ -3,34 +3,36 @@
 import java.util.*;
 
 public class Problem1 {
+    //retrun the map with shortest distances from the starting node to all other nodes
     public static Map<String, Integer> dijkstra(Map<String, Map<String, Integer>> graph, String start) {
+        //declare hashmap and name distances to store the distances for each node
         Map<String, Integer> distances = new HashMap<>();
+        //loop for initializes the distances of the nodes
         for (String node : graph.keySet()) {
             distances.put(node, Integer.MAX_VALUE);
-        }
-        distances.put(start, 0);
-
+        //distances set with zero as the start to itself is 0
+        } distances.put(start, 0);
+        //with name priorityQueue to store nodes and prioritized their distances
         PriorityQueue<Node> priorityQueue = new PriorityQueue<>();
+        //add the stariting with zero distance to the priority queue
         priorityQueue.offer(new Node(start, 0));
-
         //d = current distance
         //n = current node
+        //loop until the priority queue empty
         while (!priorityQueue.isEmpty()) {
             Node current = priorityQueue.poll();
             int d = current.distance;
             String n = current.node;
-
-            // if had already find the shorter path ignore it
+            // check if the distance is greater than the distance that just stored in map for node or not
             if (d > distances.get(n)) {
                 continue;
             }
-
+            //caluclates the new distance from the start node by adding the currrent distance and the weight
             Map<String, Integer> neighbors = graph.get(n);
             for (Map.Entry<String, Integer> neighbor : neighbors.entrySet()) {
                 String nextNode = neighbor.getKey();
                 int weight = neighbor.getValue();
                 int distance = d + weight;
-
                 // if the shorter path is found update the distance
                 if (distance < distances.get(nextNode)) {
                     distances.put(nextNode, distance);
@@ -38,50 +40,37 @@ public class Problem1 {
                 }
             }
         }
-
+        //returns distances that contain the shortest distances from the starting node to all nodes
         return distances;
     }
-
     public static void main(String[] args) {
         Map<String, Map<String, Integer>> vertex = new HashMap<>();
         //create the vertex of A B C D E F
-        vertex.put("A", new HashMap<>());
-        vertex.put("B", new HashMap<>());
-        vertex.put("C", new HashMap<>());
-        vertex.put("D", new HashMap<>());
+        vertex.put("A", new HashMap<>());vertex.put("B", new HashMap<>());
+        vertex.put("C", new HashMap<>()); vertex.put("D", new HashMap<>());
         vertex.put("E", new HashMap<>());
-        
         //assign the value and distance
-        vertex.get("A").put("B", 10);
-        vertex.get("A").put("C", 8);
-        vertex.get("B").put("D", 7);
-        vertex.get("B").put("E", 6);
-        vertex.get("C").put("B", 8);
-        vertex.get("C").put("E", 12);
+        vertex.get("A").put("B", 10);vertex.get("A").put("C", 8);
+        vertex.get("B").put("D", 7);vertex.get("B").put("E", 6);
+        vertex.get("C").put("B", 8);vertex.get("C").put("E", 12);
         vertex.get("D").put("E", 16);
-   
-        
-
         //The start node set with A vertex
         String startNode = "A";
         Map<String, Integer> distances = dijkstra(vertex, startNode);
-
         //print out the ouput
         System.out.println("The shortest distances from node " + startNode + ":");
         for (Map.Entry<String, Integer> entry : distances.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
     }
-
+    //compare two nodes based on their distances
     static class Node implements Comparable<Node> {
         String node;
         int distance;
-
         Node(String node, int distance) {
             this.node = node;
             this.distance = distance;
         }
-
         @Override
         public int compareTo(Node other) {
             return Integer.compare(distance, other.distance);
